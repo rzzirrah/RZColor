@@ -1,0 +1,60 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!-- Baseado no template oficial da toolchain (dotnet new csiimod, jogo 1.6.0f1).
+	     A versão do .NET (net48) é definida pela própria toolchain no Mod.props. -->
+	<PropertyGroup>
+		<Configurations>Debug;Release</Configurations>
+
+		<!-- Informações de publicação na PDX Mods -->
+		<PublishConfigurationPath>Properties\PublishConfiguration.xml</PublishConfigurationPath>
+	</PropertyGroup>
+
+	<!-- Imports da toolchain: precisam vir depois do PropertyGroup.
+	     Eles encontram as DLLs do jogo e copiam o mod compilado para a pasta Mods. -->
+	<Import Project="$([System.Environment]::GetEnvironmentVariable('CSII_TOOLPATH', 'EnvironmentVariableTarget.User'))\Mod.props" />
+	<Import Project="$([System.Environment]::GetEnvironmentVariable('CSII_TOOLPATH', 'EnvironmentVariableTarget.User'))\Mod.targets" />
+
+	<!-- DLLs do jogo que o mod usa. Private=false: não copia para o mod (o jogo já tem). -->
+	<ItemGroup>
+		<Reference Include="Game"><Private>false</Private></Reference>
+		<Reference Include="Colossal.Core"><Private>false</Private></Reference>
+		<Reference Include="Colossal.Logging"><Private>false</Private></Reference>
+		<Reference Include="Colossal.IO.AssetDatabase"><Private>false</Private></Reference>
+		<Reference Include="Colossal.UI"><Private>false</Private></Reference>
+		<Reference Include="Colossal.Localization"><Private>false</Private></Reference>
+		<Reference Include="Colossal.UI.Binding"><Private>false</Private></Reference>
+		<Reference Include="UnityEngine.CoreModule"><Private>false</Private></Reference>
+		<Reference Include="UnityEngine.JSONSerializeModule"><Private>false</Private></Reference>
+		<Reference Include="Unity.Burst"><Private>false</Private></Reference>
+		<Reference Include="Unity.Collections"><Private>false</Private></Reference>
+		<Reference Include="Unity.Entities"><Private>false</Private></Reference>
+		<Reference Include="Unity.Mathematics"><Private>false</Private></Reference>
+		<!-- HDRP: onde ficam Volume, LiftGammaGain, ColorCurves, ChannelMixer -->
+		<Reference Include="Unity.RenderPipelines.Core.Runtime"><Private>false</Private></Reference>
+		<Reference Include="Unity.RenderPipelines.HighDefinition.Runtime"><Private>false</Private></Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Update="System"><Private>false</Private></Reference>
+		<Reference Update="System.Core"><Private>false</Private></Reference>
+		<Reference Update="System.Data"><Private>false</Private></Reference>
+	</ItemGroup>
+
+	<!-- A pasta UI (painel em React) tem build próprio; não entra na compilação do C# -->
+	<PropertyGroup>
+		<DefaultItemExcludes>$(DefaultItemExcludes);UI\**</DefaultItemExcludes>
+	</PropertyGroup>
+
+	<!-- Depois de compilar o C#, compila também o painel (npm run build dentro de UI).
+	     O painel vai para a mesma pasta Mods\RZColor. -->
+	<Target Name="BuildUI" AfterTargets="AfterBuild">
+		<Error Condition="!Exists('$(ProjectDir)UI\node_modules')" Text="Painel sem dependências: abra um terminal na pasta UI e rode 'npm install' uma vez." />
+		<Exec Command="npm run build" WorkingDirectory="$(ProjectDir)UI" />
+	</Target>
+
+	<ItemGroup>
+		<None Include="$(ModPropsFile)" Link="Properties\Mod.props" />
+		<None Include="$(ModTargetsFile)" Link="Properties\Mod.targets" />
+	</ItemGroup>
+
+</Project>

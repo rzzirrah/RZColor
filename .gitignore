@@ -1,0 +1,11 @@
+# Build output
+bin/
+obj/
+Library/
+
+# Visual Studio
+.vs/
+*.user
+
+# UI dependencies (recreated with npm install)
+node_modules/
