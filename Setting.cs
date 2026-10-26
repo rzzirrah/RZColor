@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.IO;
+using Colossal.IO.AssetDatabase;
 using Game.Modding;
 using Game.Settings;
 using RZColor.Systems;
@@ -8,14 +9,23 @@ using UnityEngine;
 namespace RZColor
 {
     // Página do RZColor em Opções do jogo (aparece na lista da esquerda, como SKYVE etc.).
-    // Só tem botões: os ajustes de cor continuam no painel e no RZColor.json.
-    [SettingsUIGroupOrder(kToolsGroup, kSupportGroup)]
-    [SettingsUIShowGroupName(kToolsGroup, kSupportGroup)]
+    // Os ajustes de cor continuam no painel e no RZColor.json.
+    // Aqui ficam só as ferramentas e a prioridade do volume (salva em ModsSettings\RZColor).
+    [FileLocation("ModsSettings/RZColor/RZColor")]
+    [SettingsUIGroupOrder(kToolsGroup, kCompatGroup, kSupportGroup)]
+    [SettingsUIShowGroupName(kToolsGroup, kCompatGroup, kSupportGroup)]
     public class Setting : ModSetting
     {
         public const string kSection = "Main";
         public const string kToolsGroup = "Tools";
         public const string kSupportGroup = "Support";
+        public const string kCompatGroup = "Compatibility";
+
+        // Prioridade padrão do volume. O Lumina usa 5000, então por padrão ele vence
+        // quando os dois mexem no mesmo efeito.
+        public const int DefaultPriority = 4900;
+
+        private int m_VolumePriority = DefaultPriority;
 
         public Setting(IMod mod) : base(mod) { }
 
@@ -30,6 +40,20 @@ namespace RZColor
                 ColorVolumeSystem.Instance?.ReplaceSettings(new ColorSettings());
                 ColorVolumeSystem.Instance?.MarkDirty(saveToDisk: true);
                 Mod.Log.Info("All color settings reset from the Options page.");
+            }
+        }
+
+        // Slider: prioridade do volume "RZColor". Muda na hora e fica salvo.
+        // Volume de prioridade maior vence quando dois mods mexem no mesmo efeito.
+        [SettingsUISlider(min = 0, max = 10000, step = 100, scalarMultiplier = 1, unit = "integer")]
+        [SettingsUISection(kSection, kCompatGroup)]
+        public int VolumePriority
+        {
+            get => m_VolumePriority;
+            set
+            {
+                m_VolumePriority = value;
+                ColorVolumeSystem.Instance?.SetPriority(value);
             }
         }
 
@@ -62,7 +86,10 @@ namespace RZColor
             }
         }
 
-        // Nada a restaurar: a página só tem botões.
-        public override void SetDefaults() { }
+        // Valores padrão das opções salvas.
+        public override void SetDefaults()
+        {
+            m_VolumePriority = DefaultPriority;
+        }
     }
 }

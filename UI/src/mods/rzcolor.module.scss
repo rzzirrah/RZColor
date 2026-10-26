@@ -1,0 +1,237 @@
+// Estilos do RZColor — valores tirados do design no Figma (frame "Painel"),
+// reduzidos para a escala do jogo (1rem ≈ 1px em Full HD).
+// O motor de interface do jogo (Gameface) só aceita layout com flex (sem grid, sem "gap").
+
+// ---------- Cores do design ----------
+$bg-top: #716c66;
+$bg-bottom: #6b899c;
+$track: #d9d9d9;
+$thumb: #505050;
+$pill: #505050;
+$close-bg: #c7c5c3;
+$text: #ffffff;
+
+// ---------- Medidas principais (mexa aqui para aumentar/diminuir tudo) ----------
+$pad-x: 23rem;        // margem lateral
+$label-w: 71rem;      // largura da coluna dos nomes
+$row-h: 41rem;        // altura de cada linha de slider
+$track-h: 22rem;      // altura da trilha
+$thumb-size: 25rem;   // tamanho do cursor
+$font: 13rem;         // texto dos sliders
+
+// ---------- Janela ----------
+.window {
+    position: absolute;
+    width: 354rem;
+    padding: 18rem $pad-x 26rem $pad-x;
+    border-radius: 8rem;
+    background-image: linear-gradient(to bottom, $bg-top 0%, $bg-bottom 100%);
+    box-shadow: 0rem 8rem 30rem rgba(0, 0, 0, 0.45);
+    color: $text;
+    font-family: Overpass;
+    pointer-events: auto;
+}
+
+// Fechar (círculo claro com X escuro)
+.close {
+    position: absolute;
+    top: 10rem;
+    right: 10rem;
+    width: 20rem;
+    height: 20rem;
+    border-radius: 10rem;
+    background-color: $close-bg;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #ffffff;
+    }
+}
+
+.closeGlyph {
+    width: 10rem;
+    height: 10rem;
+    background-color: #555555;
+    // a imagem (ícone de fechar do próprio jogo) é definida no .tsx
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+}
+
+// ---------- Título ----------
+.header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 18rem;
+    cursor: move;
+}
+
+.title {
+    font-size: 26rem;
+    color: $text;
+    // no jogo, cada pedaço de texto vira um bloco; flex em linha mantém "RZ" e "Color" lado a lado
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    white-space: nowrap;
+}
+
+.titleBold {
+    font-weight: 900;
+}
+
+.titleLight {
+    font-weight: normal;
+}
+
+.headerButtons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+// Botão "pílula" (Reset all settings / On-Off)
+.pill {
+    height: 17rem;
+    padding: 0rem 10rem;
+    margin-left: 6rem;
+    border-radius: 9rem;
+    background-color: $pill;
+    color: $text;
+    font-size: 10rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #3c3c3c;
+    }
+}
+
+.pillOff {
+    opacity: 0.55;
+}
+
+// ---------- Corpo ----------
+.body {
+    display: flex;
+    flex-direction: column;
+}
+
+.dimmed {
+    opacity: 0.45;
+}
+
+.sectionTitle {
+    font-size: 15rem;
+    font-weight: bold;
+    color: $text;
+    margin-top: 22rem;
+    margin-bottom: 4rem;
+}
+
+// ---------- Linha de slider ----------
+.row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: $row-h;
+}
+
+.label {
+    // largura mínima da coluna dos nomes; em idiomas com palavras longas, a trilha encolhe um pouco
+    min-width: $label-w;
+    padding-right: 6rem;
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-size: $font;
+    color: $text;
+}
+
+.sliderLine {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.track {
+    flex: 1;
+    position: relative;
+    height: $track-h;
+    border-radius: 8rem;
+    background-color: $track;
+    cursor: pointer;
+}
+
+// área onde o centro do cursor anda (recuada meio cursor de cada lado)
+.rail {
+    position: absolute;
+    top: 0rem;
+    bottom: 0rem;
+    left: $thumb-size * 0.5;
+    right: $thumb-size * 0.5;
+}
+
+.thumb {
+    position: absolute;
+    top: ($track-h - $thumb-size) * 0.5;
+    width: $thumb-size;
+    height: $thumb-size;
+    margin-left: -$thumb-size * 0.5;
+    border-radius: $thumb-size * 0.5;
+    background-color: $thumb;
+}
+
+.value {
+    width: 30rem;
+    margin-left: 9rem;
+    font-size: $font;
+    color: $text;
+}
+
+// ---------- Color Mixer ----------
+.mixer {
+    display: flex;
+    flex-direction: column;
+    padding-left: 38rem;
+}
+
+.swatches {
+    display: flex;
+    flex-direction: row;
+    margin: 8rem 0rem 6rem 0rem;
+}
+
+.swatch {
+    width: 27rem;
+    height: 27rem;
+    border-radius: 14rem;
+    margin-right: 15rem;
+    border: 2rem solid rgba(255, 255, 255, 0);
+    cursor: pointer;
+}
+
+.swatchSelected {
+    border: 2rem solid #ffffff;
+}
+
+.rowStacked {
+    display: flex;
+    flex-direction: column;
+    margin-top: 6rem;
+    padding-right: 33rem; // no design, as trilhas do mixer terminam antes das de cima
+}
+
+.labelTop {
+    font-size: $font;
+    color: $text;
+    margin-left: 4rem;
+    margin-bottom: 2rem;
+}

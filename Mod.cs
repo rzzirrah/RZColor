@@ -1,3 +1,4 @@
+using Colossal.IO.AssetDatabase;
 using Colossal.Logging;
 using Game;
 using Game.Modding;
@@ -11,12 +12,15 @@ namespace RZColor
     public class Mod : IMod
     {
         public const string ModName = "RZColor";
-        public const string Version = "1.0";
+        public const string Version = "1.1";
 
         // Logger: as mensagens vão para ...\Cities Skylines II\Logs\RZColor.log
         public static readonly ILog Log = LogManager.GetLogger(ModName).SetShowsErrorsInUI(false);
 
         private Setting m_Setting;
+
+        // Acesso global às opções (o ColorVolumeSystem lê a prioridade daqui).
+        public static Setting Settings { get; private set; }
 
         public void OnLoad(UpdateSystem updateSystem)
         {
@@ -27,6 +31,10 @@ namespace RZColor
 
             // Página em Opções do jogo + textos de todos os idiomas (Localization.cs)
             m_Setting = new Setting(this);
+            // Carrega as opções salvas (ex.: prioridade do volume) do arquivo
+            // ModsSettings\RZColor\RZColor.coc. Fica fora dos saves, como o RZColor.json.
+            AssetDatabase.global.LoadSettings(ModName, m_Setting, new Setting(this));
+            Settings = m_Setting;
             m_Setting.RegisterInOptionsUI();
             RZLocalization.Register(m_Setting);
 
@@ -46,6 +54,7 @@ namespace RZColor
                 m_Setting.UnregisterInOptionsUI();
                 m_Setting = null;
             }
+            Settings = null;
             Log.Info("RZColor unloaded.");
         }
     }
