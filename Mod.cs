@@ -12,7 +12,7 @@ namespace RZColor
     public class Mod : IMod
     {
         public const string ModName = "RZColor";
-        public const string Version = "1.1";
+        public const string Version = "1.2";
 
         // Logger: as mensagens vão para ...\Cities Skylines II\Logs\RZColor.log
         public static readonly ILog Log = LogManager.GetLogger(ModName).SetShowsErrorsInUI(false);
@@ -24,6 +24,9 @@ namespace RZColor
 
         public void OnLoad(UpdateSystem updateSystem)
         {
+            // Garante que o RZColor.log seja gravado mesmo quando o nível de log do jogo está baixo.
+            Log.effectivenessLevel = Level.Info;
+
             Log.Info($"RZColor {Version} loading...");
 
             if (GameManager.instance.modManager.TryGetExecutableAsset(this, out var asset))

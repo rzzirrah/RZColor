@@ -1,0 +1,84 @@
+<Publish>
+  <!-- RZColor on PDX Mods: https://mods.paradoxplaza.com/mods/164660/Windows -->
+  <ModId Value="164660" />
+  <DisplayName Value="RZColor" />
+  <ShortDescription Value="Lightweight in-game color grading: saturation, contrast, blacks, gamma, whites, temperature and selective color." />
+  <LongDescription>
+Hi everyone!
+
+Today I bring you something very different from what I've published here: it's my first (and so far only) code mod on PDX Mods. RZColor was a long-standing personal desire, and I decided to put the project into practice.
+
+## A little background...
+
+Since CS1, I've used mods that change the game's visuals. I confess that I've never been a big fan of how the game handles colors; I always find everything too saturated. One or two colors are okay to be colorful, but when everything is like that, it ends up looking kind of cartoonish.
+
+For CS2, we have two excellent graphics mods that I always use: Lumina and Sun Glasses. Lumina, specifically, has the ability to handle saturation and contrast, and with the latest updates, it manages to deliver an incredible visual for the game. But one thing was missing: treating the game's color channels individually, not as a single unit (as is the case with saturation).
+
+## What is this mod?
+
+RZColor handles color channels individually, like Photoshop's selective color. You can individually change the following colors (and their shades): Cyan, Magenta, Yellow, Red, Green, and Blue (CMYRGB). For each of these channels, you can change the hue and saturation, creating endless visual combinations. Additionally, there are options to change the strength of blacks, whites, temperature, tint, contrast, overall saturation, and gamma. You can see some examples in the image gallery.
+
+**The panel:** click the brush icon at the top left of the screen. Every change shows up live. You can drag the window by its title, use the On/Off button to compare with the vanilla look, reset everything with "Reset all settings", or double-click any slider to send it back to 0. The panel is available in English, Portuguese (BR), French, German, Spanish, Simplified Chinese and Korean.
+
+## RZColor is a live LUT
+
+The idea here is for you to play with the channel settings and create your own live LUT while playing. Technically, that's exactly what happens: HDRP (the game's render pipeline) bakes all color grading into a single LUT, and RZColor feeds its settings into that LUT. There's no extra image filter running on top of the screen. HDRP normally rebuilds the LUT only when a color setting changes, but while saturation, contrast or the color mixer is in use (they work through curves), it rebuilds the LUT every frame. That's a small calculation over the LUT itself, not over the whole image, so the performance cost is still very low. Sliders left at 0 switch their curves off.
+
+## How it works (for the curious)
+
+RZColor creates its own global HDRP volume (default priority 4900, adjustable in Options) and uses only three color grading components:
+
+*   **Lift Gamma Gain:** blacks, gamma and whites
+*   **Color Curves:** overall saturation, contrast, and the color mixer (Hue vs Hue and Hue vs Saturation curves)
+*   **Channel Mixer:** temperature and tint
+
+The color mixer bands are centered on where each color actually sits in the color space HDRP is grading in, so they behave like Photoshop's selective color. That space depends on the tonemapper: ACEScg with ACES (the game's default), linear Rec.709 with anything else (Neutral, None or an external LUT). RZColor detects the active tonemapper and moves the bands automatically, so it works with whatever you pick in Lumina. Each band works at full strength close to its color and fades smoothly into its neighbors. Any slider left at 0 switches its parameter off completely, so it doesn't touch the game or other mods.
+
+## Sharing your look
+
+Your settings are saved in a small JSON file, outside your save games:
+
+`%USERPROFILE%\AppData\LocalLow\Colossal Order\Cities Skylines II\ModsData\RZColor\RZColor.json`
+
+You can also open this folder from **Options → RZColor → Open settings folder**. To share your look, just send the file. To use someone else's, replace yours with theirs. RZColor picks up the change within a second, even with the game running.
+
+## Compatibility and use with other mods
+
+RZColor is compatible with Lumina (base) and Sun Glasses. Lumina handles color through ColorAdjustments, WhiteBalance, ShadowsMidtonesHighlights and Tonemapping, while RZColor only uses the three components listed above. Nothing overlaps, so the effects stack instead of overriding each other. If you use the saturation slider in both mods, their effects multiply.
+
+Obviously, I suggest using Lumina more for options other than saturation. For my tests, I unchecked all of Lumina's options and only used SSAO.
+
+**Lumina and Lumina NGX**  
+RZColor adds its own global HDRP volume named **“RZColor”**. Classic Lumina works side by side with it, since each mod uses different color components. Lumina NGX can edit any volume, including RZColor’s, so when both change the same effect, the volume with the higher priority wins. You can set RZColor’s priority in **Options → RZColor → Volume priority** (default 4900; Lumina uses 5000). If you remove RZColor’s components in NGX, they come back the next time you move an RZColor slider.
+
+## Important notes
+
+This mod will NOT affect your save files. Nothing is written to your city, so you can disable or remove it at any time. If something goes wrong, **Options → RZColor → Open log folder** takes you to RZColor.log. Please attach it when reporting a problem.
+
+The creation of this code was guided by Claude Opus 5.5. UI created by me using Figma.
+
+I made this as a player, for my own gameplay, and I’m sharing it in case it’s useful to you too.
+
+## Acknowledgements
+
+Nyokito (Nyoko), for creating [Lumina](https://mods.paradoxplaza.com/mods/94394/Windows) and inspiring this mod. Cmyna, for creating [SunGlasses](https://mods.paradoxplaza.com/mods/76849/Windows) and inspiring this mod.
+
+Many thanks to both creators for making two excellent mods for those who like a different look from vanilla.
+  </LongDescription>
+  <Thumbnail Value="Properties/icon.png" />
+  <Screenshot Value="Properties/gallery1.jpg" />
+  <Screenshot Value="Properties/gallery2.jpg" />
+  <Screenshot Value="Properties/gallery3.jpg" />
+  <Screenshot Value="Properties/gallery4.jpg" />
+  <Tag Value="Code Mod" />
+  <ModVersion Value="1.2" />
+  <GameVersion Value="1.6.*" />
+  <ExternalLink Type="github" Url="https://github.com/rzzirrah/RZColor" />
+  <ExternalLink Type="discord" Url="https://discord.com/channels/1024242828114673724/1447143992654434467" />
+  <ExternalLink Type="kofi" Url="https://ko-fi.com/rzzirrah" />
+  <AccessLevel Value="Unlisted" />
+  <ChangeLog>
+- The color mixer now follows the active tonemapper: bands are placed for ACEScg with ACES, and for linear Rec.709 with Neutral, None or an external LUT.
+- Description fixes about the LUT and grading color space. Thanks for the feedback!
+  </ChangeLog>
+</Publish>

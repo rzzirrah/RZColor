@@ -14,7 +14,7 @@ RZColor creates its own global HDRP volume, named `RZColor` (default priority 49
 | `ColorCurves` | Saturation, contrast, color mixer (Hue vs Hue / Hue vs Sat curves) |
 | `ChannelMixer` | Temperature, tint |
 
-HDRP bakes all color grading into a single LUT, which is only rebuilt when a grading setting changes, so there's no extra post-processing pass. The color mixer bands are centered for ACEScg, the space HDRP grades in when the ACES tonemapper is active. With other tonemappers (Neutral, None or an external LUT), HDRP grades in linear Rec.709 and the bands may land slightly off their colors. Sliders left at 0 switch their parameter off.
+HDRP bakes all color grading into a single 3D LUT, so there's no extra full-screen pass. The LUT is normally rebuilt only when a grading setting changes, but HDRP skips that check while any `ColorCurves` parameter is overridden, so it rebuilds the LUT every frame whenever saturation, contrast or the color mixer is in use. That rebuild is a small compute pass over the LUT, not the screen, so the cost stays very low. Sliders left at 0 switch their curves off. HDRP grades in ACEScg when the ACES tonemapper is active (the game's default) and in linear Rec.709 with any other tonemapper (Neutral, None or an external LUT). RZColor checks the active tonemapper on the main camera's volume stack and moves the color mixer bands to match, so each band stays on its color in either space. Sliders left at 0 switch their parameter off.
 
 Settings live in `%USERPROFILE%\AppData\LocalLow\Colossal Order\Cities Skylines II\ModsData\RZColor\RZColor.json` and are never written to save files. The file is reloaded automatically when it changes, so looks can be shared by copying it.
 
